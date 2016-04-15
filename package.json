@@ -1,0 +1,34 @@
+{
+  "name": "koa-ln",
+  "version": "0.0.1",
+  "description": "ln logger middleware for koa2",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "logger",
+    "ln",
+    "koa"
+  ],
+  "author": {
+    "name": "qinjia",
+    "email": "qinjia@outlook.com"
+  },
+  "engines": {
+    "node": ">=4.0.0"
+  },
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/hellopao/koa-ln"
+  },
+  "dependencies": {
+    "debug": "^2.2.0",
+    "ln": "^0.4.0",
+    "mini-moment": "0.0.5"
+  },
+  "homepage": "https://github.com/hellopao/koa-ln",
+  "_id": "koa-ln@0.0.1",
+  "_from": "koa-ln@"
+}
