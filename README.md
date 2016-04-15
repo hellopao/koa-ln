@@ -67,7 +67,7 @@ default is 'Y-M-D', that means the log's filename will be app/access-2016-04-15.
 
 format string
 
-default is ":remote-addr :method :http-version :url :referrer :content-length :user-agent :status :request-time :body_bytes_sent"
+default is ":remote-addr :method :http-version :url :referrer :content-length :user-agent :status :request-time :body-bytes"
 
 ### formatter
 

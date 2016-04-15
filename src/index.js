@@ -4,7 +4,7 @@ const assert = require('assert');
 const util = require('util');
 
 const ln = require('ln');
-const Moment = require('mini-moment');
+const Moment = require('mini-moment').default;
 const debug = require('debug')('koa-logger-ln');
 
 function createLogger(name,opts) {
@@ -18,7 +18,7 @@ function createLogger(name,opts) {
     opts.name = opts.name || name;
     opts.dateFormat = opts.dateFormat || "Y-M-D";
     opts.formatter = opts.formatter || function (json) {
-        return util.format("%s - %s - %s - %d - %s", new Moment(json.t).format('yyyy-MM-dd hh:mm:ss.SSS'), Ln.LEVEL[json.l], json.n, json.p, json.m);
+        return util.format("%s - %s - %s - %d - %s", new Moment(json.t).format('yyyy-MM-dd hh:mm:ss.SSS'), ln.LEVEL[json.l], json.n, json.p, json.m);
     };
     
     return new ln({
@@ -33,8 +33,8 @@ function createLogger(name,opts) {
 }
 
 module.exports = function (opts) {
-    
-    opts.format = opts.format || ":remote-addr :method :http-version :url :referrer :content-length :user-agent :status :request-time :body_bytes_sent";
+    opts = opts || {};
+    opts.format = opts.format || ":remote-addr :method :http-version :url :referrer :content-length :user-agent :status :request-time :body-bytes";
 
     const logger = createLogger("access",opts);
     
@@ -45,23 +45,23 @@ module.exports = function (opts) {
             const end = process.hrtime(start);
             
             const formats = {
-                "remote-addr": ctx.ip,
-                "method": ctx.method,
-                "http-version": `HTTP/${ctx.req.httpVersion}`,
-                "url": ctx.originalUrl,
-                "content-length": `${ctx.headers['content-length'] || 0}Bytes`,
-                "status": ctx.status,
-                "user-agent": ctx.headers['user-agent'],
-                "request-time": `${end[0] * 1e3 + end[1] / 1e6}ms`,
-                "referrer": ctx.headers['referrer'] || ctx.origin,
-                "body-bytes": `${Buffer.byteLength(ctx.body)}Bytes`
+                ":remote-addr": ctx.ip,
+                ":method": ctx.method,
+                ":http-version": `HTTP/${ctx.req.httpVersion}`,
+                ":url": ctx.originalUrl,
+                ":content-length": `${ctx.headers['content-length'] || 0}Bytes`,
+                ":status": ctx.status,
+                ":user-agent": ctx.headers['user-agent'],
+                ":request-time": `${end[0] * 1e3 + end[1] / 1e6}ms`,
+                ":referrer": ctx.headers['referrer'] || ctx.origin,
+                ":body-bytes": `${Buffer.byteLength(ctx.body)}Bytes`
             };
             
             try {
                 const logStr = opts.format.split(' ').map(item => {
-                    return formats[':' + item];
-                });
-                const customStr = opts.custom && opts.custom(ctx);
+                    return formats[item];
+                }).join(' - ');
+                const customStr = opts.custom && opts.custom(ctx) || "";
                 logger.info(customStr + logStr);
             } catch (err) {
                 ctx.throw(err);
@@ -73,5 +73,6 @@ module.exports = function (opts) {
 module.exports.appLogger = function (opts) {
     return function (ctx,next) {
         ctx.logger = createLogger("app",opts);
+        next && next();
     }
 }
