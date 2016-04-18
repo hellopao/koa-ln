@@ -94,6 +94,6 @@ module.exports.appLogger = function (opts) {
                 ctx.throw(err);
             }
         }
-        next && next();
+        return next();
     }
 }
