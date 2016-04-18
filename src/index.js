@@ -17,16 +17,21 @@ function createLogger(name,opts) {
     
     opts.name = opts.name || name;
     opts.dateFormat = opts.dateFormat || "Y-M-D";
-    opts.formatter = opts.formatter || function (json) {
-        return util.format("%s - %s - %s - %d - %s", new Moment(json.t).format('yyyy-MM-dd hh:mm:ss.SSS'), ln.LEVEL[json.l], json.n, json.p, json.m);
-    };
+    
+    if (opts.json) {
+        opts.formatter = null;
+    } else {
+        opts.formatter = opts.formatter || function (json) {
+            return util.format("%s - %s - %s - %d - %s", new Moment(json.t).format('yyyy-MM-dd hh:mm:ss.SSS'), ln.LEVEL[json.l], json.n, json.p, json.m);
+        };
+    }
     
     return new ln({
         name: opts.name,
         level: opts.level || "info",
         appenders: [{
             type: opts.type || "console",
-            path: `[${opts.path}/${opts.name}]${opts.dateFormat}[.log]`,
+            path: `[${opts.path}/${opts.name}.]${opts.dateFormat}[.log]`,
             formatter: opts.formatter
         }]
     });
@@ -52,15 +57,22 @@ module.exports = function (opts) {
                 ":content-length": `${ctx.headers['content-length'] || 0}Bytes`,
                 ":status": ctx.status,
                 ":user-agent": ctx.headers['user-agent'],
-                ":request-time": `${end[0] * 1e3 + end[1] / 1e6}ms`,
+                ":request-time": `${(end[0] * 1e3 + end[1] / 1e6).toFixed(2)}ms`,
                 ":referrer": ctx.headers['referrer'] || ctx.origin,
                 ":body-bytes": `${Buffer.byteLength(ctx.body)}Bytes`
             };
             
             try {
-                const logStr = opts.format.split(' ').map(item => {
-                    return formats[item];
-                }).join(' - ');
+                var logStr;
+                
+                if (typeof opts.format === "function") {
+                    logStr = opts.format(ctx);
+                } else {
+                    logStr = opts.format.split(' ').map(item => {
+                        return formats[item];
+                    }).join(' - ');
+                }
+                
                 const customStr = opts.custom && opts.custom(ctx) || "";
                 logger.info(customStr + logStr);
             } catch (err) {
@@ -73,6 +85,15 @@ module.exports = function (opts) {
 module.exports.appLogger = function (opts) {
     return function (ctx,next) {
         ctx.logger = createLogger("app",opts);
+        ctx.logger.setLevel = function (level) {
+            try {
+                ctx.logger.appenders.forEach(function (appender) {
+                    appender.level = ln.LEVEL[level.toUpperCase()]; 
+                });
+            } catch (err) {
+                ctx.throw(err);
+            }
+        }
         next && next();
     }
 }

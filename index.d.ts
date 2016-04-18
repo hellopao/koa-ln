@@ -18,16 +18,20 @@ export interface LogOptions {
     path?: string;
 
     /**
+     * use json type log
+     */
+    json?: boolean;
+    /**
      * date format of the log's filename
      * default is 'Y-M-D', that means the log's filename will be app/access-2016-04-15.log
      */
     dateFormat?: string;
 
     /**
-     * format string
+     * log format string 
      * default is ":remote-addr :method :http-version :url :referrer :content-length :user-agent :status :request-time :body-bytes" 
     */
-    format: string;
+    format?: (ctx: Koa.Context) => string | string;
 
     /**
      * function to convert the json data to string
@@ -48,6 +52,8 @@ export interface Logger {
     warn: (msg: string) => void;
     error: (msg: string) => void;
     fatal: (msg: string) => void;
+    setLevel: (level: "trace" | "debug" | "info" | "warn" | "error" | "fatal") => void;
+    appenders: Array<any>;
 }
 
 export interface Context extends Koa.Context {
