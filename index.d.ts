@@ -59,6 +59,7 @@ export interface Logger {
 export interface Context extends Koa.Context {
     logger: Logger;
 }
-export default function logger(opts?: LogOptions): { (ctx: Koa.Context, next?: () => any): any };
 
-export function appLogger(opts?: LogOptions): { (ctx: Koa.Context, next?: () => any): any };
+export function access(opts?: LogOptions): { (ctx: Koa.Context, next?: () => any): any };
+
+export function app(opts?: LogOptions): { (ctx: Koa.Context, next?: () => any): any };

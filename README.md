@@ -33,8 +33,8 @@ const logger = require('koa-ln');
 
 const app = new Koa();
 
-app.use(logger());
-app.use(logger.appLogger());
+app.use(logger.access());
+app.use(logger.app());
 
 app.use(ctx => {
     ctx.logger.info("hello world");

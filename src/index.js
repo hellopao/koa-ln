@@ -37,12 +37,12 @@ function createLogger(name,opts) {
     });
 }
 
-module.exports = function (opts) {
+exports.access = function (opts) {
     opts = opts || {};
     opts.format = opts.format || ":remote-addr :method :http-version :url :referrer :content-length :user-agent :status :request-time :body-bytes";
-
-    const logger = createLogger("access",opts);
     
+    var logger = createLogger("access",opts);    
+            
     return function (ctx, next) {
         const start = process.hrtime();
         
@@ -82,9 +82,13 @@ module.exports = function (opts) {
     }
 }
 
-module.exports.appLogger = function (opts) {
+exports.app = function (opts) {
+    var logger = createLogger("app",opts);
+    
     return function (ctx,next) {
-        ctx.logger = createLogger("app",opts);
+        if (ctx.logger) return next();
+        
+        ctx.logger = logger;
         ctx.logger.setLevel = function (level) {
             try {
                 ctx.logger.appenders.forEach(function (appender) {

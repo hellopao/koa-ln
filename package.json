@@ -1,6 +1,6 @@
 {
   "name": "koa-ln",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "ln logger middleware for koa2",
   "main": "src/index.js",
   "scripts": {
@@ -29,6 +29,6 @@
     "mini-moment": "0.0.5"
   },
   "homepage": "https://github.com/hellopao/koa-ln",
-  "_id": "koa-ln@0.0.4",
+  "_id": "koa-ln@0.0.5",
   "_from": "koa-ln@"
 }
