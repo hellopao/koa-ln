@@ -4,7 +4,7 @@ const assert = require('assert');
 const util = require('util');
 
 const ln = require('ln');
-const Moment = require('mini-moment').default;
+const Moment = require('mini-moment');
 const debug = require('debug')('koa-logger-ln');
 
 function createLogger(name,opts) {
@@ -88,7 +88,13 @@ exports.app = function (opts) {
     return function (ctx,next) {
         if (ctx.logger) return next();
         
-        ctx.logger = logger;
+        ctx.logger = {};
+        ["trace" , "debug" , "info" , "warn" , "error" , "fatal"].forEach(method => {
+            ctx.logger[method] = function () {
+                const msg = util.format.apply(util,arguments);
+                logger[method](msg);
+            };
+        });
         ctx.logger.setLevel = function (level) {
             try {
                 ctx.logger.appenders.forEach(function (appender) {
