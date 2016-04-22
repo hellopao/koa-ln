@@ -10,22 +10,6 @@ npm install koa-ln
 
 ## Usage
 
-### access log
-
-```javascript
-
-const Koa = require('koa');
-const logger = require('koa-ln');
-
-const app = new Koa();
-
-app.use(logger());
-
-app.listen(80)
-```
-
-### app log 
-
 ```javascript
 
 const Koa = require('koa');
@@ -45,42 +29,60 @@ app.listen(80)
 
 ## Options
 
-### name
+- `name` {string}
 
-name of the logger,it will be the log file's prefix name too
+ name of the logger, defaults to app/access
 
-default is access/app;
+- `type` {"file" | "console"}
 
-### type
+ log type, defaults to console
 
-log type
+- `dateFormat` {string}
 
-default is console
+ date format of the log's filename, defaults to Y-M-D
 
-### dateFormat
+- `format` {string| Function} 
 
-date format of the log's filename
+ log body format , defaults to ":remote-addr :method :http-version :url :referrer :content-length :user-agent :status :request-time :body-bytes"
 
-default is 'Y-M-D', that means the log's filename will be app/access-2016-04-15.log
+- `formatter` {Function}
 
-### format
+ function to convert the json data to string
 
-format string
+- `json` {boolean}
 
-default is ":remote-addr :method :http-version :url :referrer :content-length :user-agent :status :request-time :body-bytes"
+ use json log , defaults to false
 
-### formatter
+- `level` {"trace" | "debug" | "info" | "warn" | "error" | "fatal"}
 
-function to convert the json data to string
+ log level, defaluts to info
 
-### level
+- `path` {string}
 
-log level
+ log path, it is required when opts.type is file
 
-default is info
+## example
 
-### path
+```javascript
+const Koa = require('koa');
+const logger = require('koa-ln');
 
-log path
+const app = new Koa();
 
-it is required when type is file
+app.use(logger.access({type: "file", path: "./logs/"}));
+app.use(logger.app({type: "file", path: "./logs/", level: "debug"}));
+
+app.use(ctx => {
+    ctx.logger.debug("hello world");
+    ctx.body = "hello world";
+})
+app.listen(80)
+```
+
+### access.log
+
+    2016-04-18 10:50:50.819 - INFO - access - 908 - ::ffff:127.0.0.1 - GET - HTTP/1.1 - /koa-ln - http://127.0.0.1 - 0Bytes - Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/49.0.2623.75 Safari/537.36 - 404 - 12.90ms - 9Bytes
+
+### app.log
+
+    2016-04-18 10:50:50.902 - DEBUG - app - 908 - hello world

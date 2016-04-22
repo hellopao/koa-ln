@@ -1,10 +1,10 @@
 {
   "name": "koa-ln",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "ln logger middleware for koa2",
   "main": "src/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "ava test/ln.js -tap"
   },
   "keywords": [
     "logger",
@@ -26,9 +26,16 @@
   "dependencies": {
     "debug": "^2.2.0",
     "ln": "^0.4.0",
-    "mini-moment": "^0.0.7"
+    "mini-moment": "0.0.7"
   },
   "homepage": "https://github.com/hellopao/koa-ln",
-  "_id": "koa-ln@0.0.6",
-  "_from": "koa-ln@"
+  "_id": "koa-ln@0.0.7",
+  "_from": "koa-ln@",
+  "devDependencies": {
+    "ava": "^0.14.0",
+    "koa": "^2.0.0",
+    "koa-router": "^7.0.1",
+    "supertest": "^1.2.0",
+    "through2": "^2.0.1"
+  }
 }
