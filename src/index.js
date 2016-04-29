@@ -5,19 +5,19 @@ const util = require('util');
 
 const ln = require('ln');
 const Moment = require('mini-moment');
-const debug = require('debug')('koa-logger-ln');
+const debug = require('debug')('koa-ln');
 
-function createLogger(name,opts) {
-    opts = opts || {};  
+function createLogger(name, opts) {
+    opts = opts || {};
     debug('%j', opts);
-    
+
     if (opts.type === "file") {
         assert(opts.path, "opts.path is required when opts.type is file");
     }
-    
+
     opts.name = opts.name || name;
     opts.dateFormat = opts.dateFormat || "Y-M-D";
-    
+
     if (opts.json) {
         opts.formatter = null;
     } else {
@@ -25,7 +25,7 @@ function createLogger(name,opts) {
             return util.format("%s - %s - %s - %d - %s", new Moment(json.t).format('yyyy-MM-dd hh:mm:ss.SSS'), ln.LEVEL[json.l], json.n, json.p, json.m);
         };
     }
-    
+
     return new ln({
         name: opts.name,
         level: opts.level || "info",
@@ -40,15 +40,15 @@ function createLogger(name,opts) {
 exports.access = function (opts) {
     opts = opts || {};
     opts.format = opts.format || ":remote-addr :method :http-version :url :referrer :content-length :user-agent :status :request-time :body-bytes";
-    
-    var logger = createLogger("access",opts);    
-            
+
+    var logger = createLogger("access", opts);
+
     return function (ctx, next) {
         const start = process.hrtime();
-        
+
         return next().then(() => {
             const end = process.hrtime(start);
-            
+
             const formats = {
                 ":remote-addr": ctx.ip,
                 ":method": ctx.method,
@@ -61,19 +61,20 @@ exports.access = function (opts) {
                 ":referrer": ctx.headers['referrer'] || ctx.origin,
                 ":body-bytes": `${Buffer.byteLength(ctx.body)}Bytes`
             };
-            
+
             try {
                 var logStr;
-                
+                var customStr = "";
+
                 if (typeof opts.format === "function") {
                     logStr = opts.format(ctx);
                 } else {
-                    logStr = opts.format.split(' ').map(item => {
-                        return formats[item];
-                    }).join(' - ');
+                    logStr = ("" + opts.format).split(' ').map(item => formats[item]).join(' - ');
                 }
-                
-                const customStr = opts.custom && opts.custom(ctx) || "";
+                if (opts.custom) {
+                    assert(typeof opts.custom === "function", "opts.custom must be a function");
+                    customStr = opts.custom(ctx) || "";
+                }
                 logger.info(customStr + logStr);
             } catch (err) {
                 ctx.throw(err);
@@ -83,22 +84,22 @@ exports.access = function (opts) {
 }
 
 exports.app = function (opts) {
-    var logger = createLogger("app",opts);
-    
-    return function (ctx,next) {
+    var logger = createLogger("app", opts);
+
+    return function (ctx, next) {
         if (ctx.logger) return next();
-        
+
         ctx.logger = {};
-        ["trace" , "debug" , "info" , "warn" , "error" , "fatal"].forEach(method => {
+        ["trace", "debug", "info", "warn", "error", "fatal"].forEach(method => {
             ctx.logger[method] = function () {
-                const msg = util.format.apply(util,arguments);
+                const msg = util.format.apply(util, arguments);
                 logger[method](msg);
             };
         });
         ctx.logger.setLevel = function (level) {
             try {
-                ctx.logger.appenders.forEach(function (appender) {
-                    appender.level = ln.LEVEL[level.toUpperCase()]; 
+                ctx.logger.appenders.forEach(appender => {
+                    appender.level = ln.LEVEL[level.toUpperCase()];
                 });
             } catch (err) {
                 ctx.throw(err);

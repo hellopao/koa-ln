@@ -16,10 +16,10 @@ function getDateFmt(moment) {
 
 function removeLogs() {
     const files = fs.readdirSync('./logs/');
-    
+
     files.forEach(file => {
         try {
-            fs.unlinkSync(path.join('./logs/',file));
+            fs.unlinkSync(path.join('./logs/', file));
         } catch (err) {
             console.log(err)
         }
@@ -34,14 +34,14 @@ test.cb('access file log', t => {
     const app = new Koa();
     const router = new Router();
 
-    app.use(logger.access({type: "file" , "path": "./logs/"}));
-    
+    app.use(logger.access({ type: "file", "path": "./logs/" }));
+
     router.get('/', ctx => {
         ctx.body = "hello";
     });
 
     app.use(router.routes());
-    
+
     request(app.listen())
         .get('/')
         .expect(200)
@@ -58,15 +58,15 @@ test.cb('app file log', t => {
     const app = new Koa();
     const router = new Router();
 
-    app.use(logger.app({type: "file" , "path": "./logs/"}));
-    
+    app.use(logger.app({ type: "file", "path": "./logs/" }));
+
     router.get('/', ctx => {
         ctx.logger.info('hello')
         ctx.body = "hello";
     });
 
     app.use(router.routes());
-    
+
     request(app.listen())
         .get('/')
         .expect(200)
@@ -81,13 +81,13 @@ test.cb('app file log', t => {
 //     const router = new Router();
 
 //     app.use(logger.access({type: "file" , "path": "./logs/" , json: true}));
-    
+
 //     router.get('/', ctx => {
 //         ctx.body = "hello";
 //     });
 
 //     app.use(router.routes());
-    
+
 //     request(app.listen())
 //         .get('/')
 //         .expect(200)

@@ -1,6 +1,6 @@
 {
   "name": "koa-ln",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "ln logger middleware for koa2",
   "main": "src/index.js",
   "scripts": {
@@ -18,7 +18,7 @@
   "engines": {
     "node": ">=4.0.0"
   },
-  "license": "ISC",
+  "license": "MIT",
   "repository": {
     "type": "git",
     "url": "https://github.com/hellopao/koa-ln"
@@ -29,8 +29,6 @@
     "mini-moment": "0.0.7"
   },
   "homepage": "https://github.com/hellopao/koa-ln",
-  "_id": "koa-ln@0.0.7",
-  "_from": "koa-ln@",
   "devDependencies": {
     "ava": "^0.14.0",
     "koa": "^2.0.0",
