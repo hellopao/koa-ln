@@ -39,7 +39,7 @@ app.listen(80)
 
 - `dateFormat` {string}
 
- date format of the log's filename, defaults to Y-M-D
+ date format of the log's filename, defaults to YYYY-MM-DD
 
 - `format` {string| Function} 
 
@@ -59,7 +59,7 @@ app.listen(80)
 
 - `path` {string}
 
- log path, it is required when opts.type is file
+ log file path, it is required when opts.type is file
 
 ## example
 
@@ -79,10 +79,10 @@ app.use(ctx => {
 app.listen(80)
 ```
 
-### access.log
+### access.2016-04-18.log
 
     2016-04-18 10:50:50.819 - INFO - access - 908 - ::ffff:127.0.0.1 - GET - HTTP/1.1 - /koa-ln - http://127.0.0.1 - 0Bytes - Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/49.0.2623.75 Safari/537.36 - 404 - 12.90ms - 9Bytes
 
-### app.log
+### app.2016-04-18.log
 
     2016-04-18 10:50:50.902 - DEBUG - app - 908 - hello world

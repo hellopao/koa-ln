@@ -4,37 +4,34 @@ import * as Koa from "koa";
 
 export interface LogOptions {
     /**
-     * name of the logger,it will be the log file's prefix name too
-     * default is access/app;
+     * name of the logger, defaults to app/access
      */
     name?: string;
 
     /**
-     * log type
-     * default is console
+     * log type, defaults to console
      */
     type?: "file" | "console";
 
     /**
-     * log path,it is required when type is file
+     * log file path, it is required when opts.type is file
      */
     path?: string;
 
     /**
-     * use json type log
+     * use json log , defaults to false
      */
     json?: boolean;
+    
     /**
-     * date format of the log's filename
-     * default is 'Y-M-D', that means the log's filename will be app/access-2016-04-15.log
+     * date format of the log's filename, defaults to YYYY-MM-DD
      */
     dateFormat?: string;
 
     /**
-     * log format string 
-     * default is ":remote-addr :method :http-version :url :referrer :content-length :user-agent :status :request-time :body-bytes" 
+     * log body format , defaults to ":remote-addr :method :http-version :url :referrer :content-length :user-agent :status :request-time :body-bytes" 
     */
-    format?: (ctx: Koa.Context) => string | string;
+    format?: ((ctx: Koa.Context) => string) | string;
 
     /**
      * function to convert the json data to string
@@ -42,7 +39,7 @@ export interface LogOptions {
     formatter?: (json: JSON) => string;
 
     /**
-     * log level default is info
+     * log level, defaluts to info
      */
     level?: "trace" | "debug" | "info" | "warn" | "error" | "fatal";
 

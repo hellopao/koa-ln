@@ -16,7 +16,7 @@ function createLogger(name, opts) {
     }
 
     opts.name = opts.name || name;
-    opts.dateFormat = opts.dateFormat || "Y-M-D";
+    opts.dateFormat = opts.dateFormat || "YYYY-MM-DD";
 
     if (opts.json) {
         opts.formatter = null;
