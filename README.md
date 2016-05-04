@@ -1,6 +1,6 @@
 # koa-ln
 
-ln logger middleware for koa2
+Koa middleware for logging requests using ln
 
 ## Installation
 
