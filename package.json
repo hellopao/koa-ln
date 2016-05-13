@@ -1,6 +1,6 @@
 {
   "name": "koa-ln",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Koa middleware for logging requests using ln",
   "main": "src/index.js",
   "scripts": {

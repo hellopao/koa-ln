@@ -52,8 +52,6 @@ export interface Logger {
     warn: (...msg: string[]) => void;
     error: (...msg: string[]) => void;
     fatal: (...msg: string[]) => void;
-    setLevel: (level: "trace" | "debug" | "info" | "warn" | "error" | "fatal") => void;
-    appenders: Array<any>;
 }
 
 export interface Context extends Koa.Context {

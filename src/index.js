@@ -90,20 +90,23 @@ exports.app = function (opts) {
         if (ctx.logger) return next();
 
         ctx.logger = {};
+        ctx.logger.appenders = logger.appenders;
+        
         ["trace", "debug", "info", "warn", "error", "fatal"].forEach(method => {
             ctx.logger[method] = function () {
                 const msg = util.format.apply(util, arguments);
                 logger[method](msg);
             };
         });
-        ctx.logger.setLevel = function (level) {
-            try {
-                ctx.logger.appenders.forEach(appender => {
-                    appender.level = ln.LEVEL[level.toUpperCase()];
-                });
-            } catch (err) {
-                ctx.throw(err);
-            }
+        
+        try {
+            // change the log level dynamically            
+            const level = ctx.app.context.logLevel;
+            level && ctx.logger.appenders.forEach(appender => {
+                appender.level = ln.LEVEL[level.toUpperCase()];
+            });
+        } catch (err) {
+            ctx.throw(err);
         }
         return next();
     }

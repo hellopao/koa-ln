@@ -86,3 +86,33 @@ app.listen(80)
 ### app.2016-04-18.log
 
     2016-04-18 10:50:50.902 - DEBUG - app - 908 - hello world
+    
+## dynamic level
+
+change the log level dynamically
+
+```javascript
+const Koa = require('koa');
+const logger = require('koa-ln');
+
+const app = new Koa();
+
+app.use(logger.access({type: "file", path: "./logs/"}));
+app.use(logger.app({type: "file", path: "./logs/"}));
+
+app.use(ctx => {
+    ctx.logger.info('info log');
+    ctx.logger.debug("debug log");
+    ctx.logger.trace("trace log");
+    ctx.body = "hello world";
+})
+app.listen(80);
+
+setTimeout(() => {
+    app.context.logLevel = "debug";
+},10000);
+
+setTimeout(() => {
+    app.context.logLevel = "trace";
+},20000);
+```
