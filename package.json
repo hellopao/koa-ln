@@ -1,6 +1,6 @@
 {
   "name": "koa-ln",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Koa middleware for logging requests using ln",
   "main": "src/index.js",
   "scripts": {
@@ -31,6 +31,8 @@
   },
   "homepage": "https://github.com/hellopao/koa-ln",
   "devDependencies": {
+    "@types/koa": "^2.0.37",
+    "@types/node": "^7.0.5",
     "ava": "^0.14.0",
     "koa": "^2.0.0",
     "koa-router": "^7.0.1",

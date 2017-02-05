@@ -2,6 +2,7 @@
 
 const assert = require('assert');
 const util = require('util');
+const fs = require('fs');
 
 const ln = require('ln');
 const Moment = require('mini-moment');
@@ -13,6 +14,7 @@ function createLogger(name, opts) {
 
     if (opts.type === "file") {
         assert(opts.path, "opts.path is required when opts.type is file");
+        assert(fs.existsSync(opts.path), "log path must be an exist directory");
     }
 
     opts.name = opts.name || name;
@@ -59,7 +61,7 @@ exports.access = function (opts) {
                 ":user-agent": ctx.headers['user-agent'],
                 ":request-time": `${(end[0] * 1e3 + end[1] / 1e6).toFixed(2)}ms`,
                 ":referrer": ctx.headers['referrer'] || ctx.origin,
-                ":body-bytes": `${Buffer.byteLength(ctx.body)}Bytes`
+                ":body-bytes": `${ctx.length}Bytes`
             };
 
             try {
