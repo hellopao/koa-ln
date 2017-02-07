@@ -66,20 +66,19 @@ exports.access = function (opts) {
 
             try {
                 var logStr;
-                var customStr = "";
+                var baseStr = "";
 
                 if (typeof opts.format === "function") {
                     logStr = opts.format(ctx);
                 } else {
                     logStr = ("" + opts.format).split(' ').map(item => formats[item]).join(' - ');
                 }
-                if (opts.custom) {
-                    assert(typeof opts.custom === "function", "opts.custom must be a function");
-                    customStr = opts.custom(ctx) || "";
+                if (opts.logBase) {
+                    assert(typeof opts.logBase === "function", "opts.logBase must be a function");
+                    baseStr = opts.logBase(ctx) || "";
                 }
-                logger.info(customStr + logStr);
+                logger.info(baseStr + logStr);
             } catch (err) {
-                ctx.throw(err);
             }
         });
     }

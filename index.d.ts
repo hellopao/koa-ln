@@ -27,11 +27,6 @@ export interface LogOptions {
     dateFormat?: string;
 
     /**
-     * log body format , defaults to ":remote-addr :method :http-version :url :referrer :content-length :user-agent :status :request-time :body-bytes" 
-    */
-    format?: ((ctx: Koa.Context) => string) | string;
-
-    /**
      * function to convert the json data to string
      */
     formatter?: (json: JSON) => string;
@@ -41,6 +36,18 @@ export interface LogOptions {
      */
     level?: "trace" | "debug" | "info" | "warn" | "error" | "fatal";
 
+}
+
+export interface AccessLogOptions extends LogOptions {
+    /**
+     * log body format , defaults to ":remote-addr :method :http-version :url :referrer :content-length :user-agent :status :request-time :body-bytes" 
+    */
+    format?: ((ctx: Koa.Context) => string) | string;
+
+    /**
+     * log base
+     */
+    logBase?: (ctx: Koa.Context) => string;
 }
 
 export interface Logger {
@@ -56,6 +63,6 @@ export interface Context extends Koa.Context {
     logger: Logger;
 }
 
-export function access(opts?: LogOptions): { (ctx: Koa.Context, next?: () => any): any };
+export function access(opts?: AccessLogOptions): { (ctx: Koa.Context, next?: () => any): any };
 
 export function app(opts?: LogOptions): { (ctx: Koa.Context, next?: () => any): any };
