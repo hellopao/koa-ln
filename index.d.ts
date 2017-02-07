@@ -1,5 +1,3 @@
-/// <reference path="typings/koa/koa.d.ts" />
-
 import * as Koa from "koa";
 
 export interface LogOptions {
