@@ -40,14 +40,14 @@ export interface LogOptions {
 
 export interface AccessLogOptions extends LogOptions {
     /**
-     * log body format , defaults to ":remote-addr :method :http-version :url :referrer :content-length :user-agent :status :request-time :body-bytes" 
+     * log format , defaults to ":remote-addr :method :http-version :url :referrer :content-length :user-agent :status :request-time :body-bytes" 
     */
     format?: ((ctx: Koa.Context) => string) | string;
 
     /**
-     * log base
+     * log filter, reg or function to ignore request log;
      */
-    logBase?: (ctx: Koa.Context) => string;
+    filter?: ((ctx: Koa.Context) => boolean) | RegExp;
 }
 
 export interface Logger {

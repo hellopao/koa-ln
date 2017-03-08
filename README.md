@@ -70,6 +70,8 @@ const logger = require('koa-ln');
 const app = new Koa();
 
 app.use(logger.access({type: "file", path: "./logs/"}));
+//app.use(logger.access({format: ":url :method :request-time :[cookie-item] :[header-item]"}))
+//app.use(logger.access({filter: /\.(js|html|css)$/}))
 app.use(logger.app({type: "file", path: "./logs/", level: "debug"}));
 
 app.use(ctx => {

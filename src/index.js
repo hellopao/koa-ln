@@ -41,8 +41,6 @@ function createLogger(name, opts) {
 
 exports.access = function (opts) {
     opts = opts || {};
-    opts.format = opts.format || ":remote-addr :method :http-version :url :referrer :content-length :user-agent :status :request-time :body-bytes";
-
     var logger = createLogger("access", opts);
 
     return function (ctx, next) {
@@ -51,34 +49,57 @@ exports.access = function (opts) {
         return next().then(() => {
             const end = process.hrtime(start);
 
-            const formats = {
-                ":remote-addr": ctx.ip,
-                ":method": ctx.method,
-                ":http-version": `HTTP/${ctx.req.httpVersion}`,
-                ":url": ctx.originalUrl,
-                ":content-length": `${ctx.headers['content-length'] || 0}Bytes`,
-                ":status": ctx.status,
-                ":user-agent": ctx.headers['user-agent'],
-                ":request-time": `${(end[0] * 1e3 + end[1] / 1e6).toFixed(2)}ms`,
-                ":referrer": ctx.headers['referrer'] || ctx.origin,
-                ":body-bytes": `${ctx.length}Bytes`
-            };
-
-            try {
-                var logStr;
-                var baseStr = "";
-
-                if (typeof opts.format === "function") {
-                    logStr = opts.format(ctx);
-                } else {
-                    logStr = ("" + opts.format).split(' ').map(item => formats[item]).join(' - ');
+            let ignored = false;
+            if (util.isFunction(opts.filter)) {
+                try {
+                    ignored = opts.filter(ctx);
+                } catch (err) {
                 }
-                if (opts.logBase) {
-                    assert(typeof opts.logBase === "function", "opts.logBase must be a function");
-                    baseStr = opts.logBase(ctx) || "";
+            } else if (util.isRegExp(opts.filter)) {
+                ignored = opts.filter.test(ctx.originalUrl)
+            }
+
+            if (ignored) return;
+
+            const format = opts.format || ":remote-addr :method :http-version :url :referrer :content-length :user-agent :status :request-time :body-bytes";
+
+            var logStr = "";
+            if (util.isFunction(format)) {
+                try {
+                    logStr = format(ctx);                    
+                } catch (err) {
                 }
-                logger.info(baseStr + logStr);
-            } catch (err) {
+            } else if (util.isString(format)) {
+                const formats = {
+                    ":remote-addr": ctx.ip,
+                    ":method": ctx.method,
+                    ":http-version": `HTTP/${ctx.req.httpVersion}`,
+                    ":url": ctx.originalUrl,
+                    ":content-length": `${ctx.headers['content-length'] || 0}Bytes`,
+                    ":status": ctx.status,
+                    ":user-agent": ctx.headers['user-agent'],
+                    ":request-time": `${(end[0] * 1e3 + end[1] / 1e6).toFixed(2)}ms`,
+                    ":referrer": ctx.headers['referrer'] || ctx.origin,
+                    ":body-bytes": `${ctx.length}Bytes`,
+                    ":body": (ctx.body || "").toString()
+                };
+
+                logStr = ("" + format).split(' ').map(item => {
+                    if (item === ":body") {
+                        try {
+                            logItem = JSON.stringify(ctx.body)
+                        } catch (err) {
+                            logItem = "" + ctx.body; 
+                        }
+                    } else {
+                        logItem = formats[item] || ctx.headers[item.replace(/^:/,'')] || ctx.cookies.get(item.replace(/^:/,''));
+                    }
+                    return logItem;
+                }).join(' - ');
+            }
+
+            if (logStr) {
+                logger.info(logStr);
             }
         });
     }
@@ -92,14 +113,14 @@ exports.app = function (opts) {
 
         ctx.logger = {};
         ctx.logger.appenders = logger.appenders;
-        
+
         ["trace", "debug", "info", "warn", "error", "fatal"].forEach(method => {
             ctx.logger[method] = function () {
                 const msg = util.format.apply(util, arguments);
                 logger[method](msg);
             };
         });
-        
+
         try {
             // change the log level dynamically            
             const level = ctx.app.context.logLevel;
