@@ -85,6 +85,7 @@ exports.access = function (opts) {
                 };
 
                 logStr = ("" + format).split(' ').map(item => {
+                    let logItem;
                     if (item === ":body") {
                         try {
                             logItem = JSON.stringify(ctx.body)
